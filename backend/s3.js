@@ -15,7 +15,7 @@ const s3 = new S3({
     secretAccessKey
 })
 
-function getFileStream (fileKey) {
+ function getFileStream (fileKey) {
     const downloadParams = {
       Key: fileKey,
       Bucket: bucketName
@@ -25,19 +25,20 @@ function getFileStream (fileKey) {
   exports.getFileStream = getFileStream
 
 
+
   function createMetadataLink(id) {
     console.log("s3 stuff");
 
     //   var tokenName = parseInt(res);
     //   tokenName = tokenName;
     //   var tokenNameFinal = tokenName.toString();
-      id = id * 100;
+     //  id = id * 100;
       var metaDataname = id.toString();
       var obj = {
         description: "Stanford Alumni DAO",
         external_url: "http://gsbdao.xyz:3333/metadatas/" + metaDataname + ".json",
-        image: `http://gsbdao.xyz:3333/video/alltouch_1.mp4`,
-        name: `Genesis Member #${metaDataname}`
+        image: `https://stanford-nft.s3.us-west-1.amazonaws.com/treedao.png`,
+        name: `Generation One Member #${metaDataname}`
       }
       console.log(obj);
   
@@ -58,3 +59,39 @@ function getFileStream (fileKey) {
       });
   }
   exports.createMetadataLink = createMetadataLink
+
+
+const checkMint = (id) => {
+  console.log(id);
+    tokenCounter()
+    .then((counter) => {
+      setTimeout(() => {
+        tokenURL(counter)
+        .then((tokenURI) => {
+          console.log(tokenURI)
+          console.log(`http://gsbdao.xyz:3333/metadatas/${counter+1}.json`)
+          if(tokenURI === `http://gsbdao.xyz:3333/metadatas/${counter+1}.json`){
+            console.log("creating metadata link");
+            createMetadataLink(id);
+          }
+          else{
+            console.log("user decided not to mint!!!!!")
+          }
+	})
+	.catch((err) => {
+          console.log("not minted");
+          console.log(err);
+        })
+      }, 90000);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+} 
+module.exports.checkMint = checkMint;
+
+
+
+
+
+
